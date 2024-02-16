@@ -88,3 +88,20 @@ class Character {
     this.sprite.vel.x = 0;
   }
 }
+
+function keyTypedOld() {
+  switch(key) {
+    case 'd':
+      walkRight();
+      break;
+    case 'a':
+      walkLeft();
+      break;
+    case 'w':
+      walkUp();
+      break;
+    case 's':
+      walkDown();
+      break;
+  }
+}
