@@ -50,6 +50,7 @@ class Character {
   constructor(x,y,width,height,spriteSheet,animations) {
     this.sprite = new Sprite(x,y,width,height);
     this.sprite.spriteSheet = spriteSheet;
+    this.sprite.collider = 'none';
     this.sprite.anis.frameDelay = 8;
     this.sprite.addAnis(animations);
     this.sprite.changeAni('stand');
