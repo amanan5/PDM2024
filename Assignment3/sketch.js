@@ -1,121 +1,89 @@
-let spelunkyCharacter, greenCharacter;
-let array = [];
-
+let sprite;
+let characters = [];
 
 function preload() {
-  //Loads all sprite sheets
-  spelunky = loadImage("../Assets/spelunky.png");
-  greenChar = loadImage("../Assets/green.png");
+  let animations = {
+    stand: { row: 0, frames: 1},
+    walkRight: {row: 0, col: 1, frames: 8},
+    walkUp: {row: 5, frames: 6},
+    walkDown: {row: 5, col: 6, frames: 6}
+  };
+
+  characters.push(new Character(100,100,80,80,'assets/cyclops.png',animations));
+  characters.push(new Character(200,200,80,80,'assets/green.png',animations));
+  characters.push(new Character(250,250,80,80,'assets/eskimo.png',animations));
 }
 
 function setup() {
-    createCanvas(window.innerWidth, window.innerHeight);
-    // Fixes scale(-1) issue
-    imageMode(CENTER);
-
-    // Top Layer
-    greenCharacter = new Character(greenChar, random(50, window.innerWidth-50), random(window.innerHeight/4 - 30, window.innerHeight - 40), random(2, 5));
-    
-    // Bottom Layer
-    spelunkyCharacter = new Character(spelunky, random(50, window.innerWidth-50), random(window.innerHeight/4 - 30, window.innerHeight - 40), random(2, 5));
-   
-    let choices = [35, 70]
-    for(let i = 0; i < 20; i++) {
-      array[i] = new Cloud(random(0, window.innerWidth), 70, random(1, 2));
-    }
-    for(let i = 20; i < 40; i++) {
-      array[i] = new Cloud(random(0, window.innerWidth), 35, random(1, 2));
-    }
-    
+  createCanvas(500, 500); 
 }
 
 function draw() {
-  background(225);
+  background(0);
   
-  
-  greenCharacter.draw();
-  spelunkyCharacter.draw();
+  characters.forEach((character) => {
+    if (kb.pressing('d')) {
+      character.walkRight();
+    } 
+    else if (kb.pressing('a')) {
+      character.walkLeft();
+    } 
+    else if (kb.pressing('w')) {
+      character.walkUp();
+    }
+    else if (kb.pressing('s')) {
+      character.walkDown();
+    }
+    else {
+      //character.stop();
+    }
 
-  for(let i = 0; i < 40; i++) {
-    array[i].draw();
-  }
+    if (character.sprite.x + character.sprite.width/4 > width) {
+      character.walkLeft();
+    } else if (character.sprite.x - character.sprite.width/4 < 0) {
+      character.walkRight();
+    }
+  })
 }
-
-function keyPressed() {
-  if(keyCode == RIGHT_ARROW) {
-    greenCharacter.go(1);
-    spelunkyCharacter.go(1);
-
-  } else if (keyCode == LEFT_ARROW) {
-    greenCharacter.go(-1);
-    spelunkyCharacter.go(-1);
-   }
-}
-
-function keyReleased() {
-  greenCharacter.stop();
-  spelunkyCharacter.stop();
-}
-
-class Cloud {
-
-  draw() {
-    fill(0);
-    noStroke();
-    
-  }
-
-
-}
-
 
 class Character {
-  constructor(character, x, y, speed) {
-    this.character = character;
-    this.x = x;
-    this.y = y;
-    this.move = 0;
-    this.facing = 1;
-    this.speed = speed;
-  }
-
-  draw() {
-    push();
-    translate(this.x,this.y);
-    scale(this.facing, 1);
-
-    if(this.move == 0) {
-      image(this.character, 0, 0, 80, 80, 0, 0, 80, 80);
-    } else {
-      image(this.character, 0, 0, 80, 80, 80 * (this.sx + 1), 0, 80, 80);
-    }
-
-
-    if(frameCount % (7 - (round(this.speed - 2))) == 0) {
-      this.sx = (this.sx + 1) % 8;
-    }
-
-    if(this.x > window.innerWidth) {
-      this.move = -(this.move);
-      this.facing = -(this.facing);
-    }
-
-    if(this.x < 0) {
-      this.move = -(this.move);
-      this.facing = -(this.facing);
-    }
-
-    this.x += this.speed * this.move;
-    pop();
-  }
-
-  go(direction) {
-    this.move = direction;
-    this.facing = direction;
-    this.sx = 3;
+  constructor(x,y,width,height,spriteSheet,animations) {
+    this.sprite = new Sprite(x,y,width,height);
+    this.sprite.spriteSheet = spriteSheet;
+    this.sprite.anis.frameDelay = 8;
+    this.sprite.addAnis(animations);
+    this.sprite.changeAni('stand');
   }
 
   stop() {
-    this.move = 0;
+    this.sprite.vel.x = 0;
+    this.sprite.vel.y = 0;
+    this.sprite.changeAni('stand');
+  }
+  
+  walkRight() {
+    this.sprite.changeAni('walkRight');
+    this.sprite.vel.x = 1;
+    this.sprite.scale.x = 1;
+    this.sprite.vel.y = 0;
+  }
+  
+  walkLeft() {
+    this.sprite.changeAni('walkRight');
+    this.sprite.vel.x = -1;
+    this.sprite.scale.x = -1;
+    this.sprite.vel.y = 0;
+  }
+  
+  walkUp() {
+    this.sprite.changeAni('walkUp');
+    this.sprite.vel.y = -1;
+    this.sprite.vel.x = 0;
+  }
+  
+  walkDown() {
+    this.sprite.changeAni('walkDown');
+    this.sprite.vel.y = 1;
+    this.sprite.vel.x = 0;
   }
 }
