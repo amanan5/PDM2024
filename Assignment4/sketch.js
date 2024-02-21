@@ -34,7 +34,7 @@ function draw() {
   if (gameState === "start") {
     startScreen();
     if (mouseIsPressed) {
-      moreCherries(20);
+      moreCherries(60);
       gameState = "play";
       startTime = millis();
     }
