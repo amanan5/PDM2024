@@ -38,14 +38,13 @@ function setup() {
 function draw() {
   background('purple');
   fill('black');
-  rect(60, 335, 800, 100);
+  rect(60, 335, 900, 100);
   if(mouseIsPressed){
     background(img);
-  }
+  } 
   fill(250);
   textSize(50);
-  text('Click and hold to start static effect',80, 400);
-
+  text('Click and hit space to start static effect',80, 400);
 }
  
 function keyPressed() {
